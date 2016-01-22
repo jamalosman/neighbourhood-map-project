@@ -1,0 +1,30 @@
+{
+  "name": "neighbourhood-map-project",
+  "homepage": "https://github.com/taweel/neighbourhood-map-project",
+  "description": "Udacity project 5",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "udacity",
+    "project",
+    "5",
+    "five",
+    "neighbourhood",
+    "map"
+  ],
+  "authors": [
+    "Jamal Osman"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "~3.4.0"
+  }
+}
