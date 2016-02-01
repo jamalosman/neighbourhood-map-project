@@ -2,9 +2,43 @@ html,
 body {
     height: 100%;
     margin: 0;
+    padding: 25px 0 0 0;
+}
+
+.container-fluid {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+}
+
+#map-container {
+    height: inherit;
+}
+
+#listview {
     padding: 0;
 }
 
-#map {
-    height: 100%;
+#search-container {
+    padding: 1px 1px 0 0;
+    width: 100%;
+    border-radius: 0;
+}
+
+#search-results {
+    margin-top: 33px;
+}
+
+#search-results li {
+    border-radius: 0;
+}
+
+#search-results li:hover {
+    background-color: azure;
+}
+
+#search-container input {
+    border-radius: 0;
 }
