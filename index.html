@@ -20,24 +20,25 @@
     </nav>
 
     <div class="container-fluid row">
-        <div id="map-container" class="col-md-9" data-bind="map: mapCanvas"></div>
         <div id="listview" class="col-md-3" foreach: searchResults>
             <div id="search-container" class="input-group">
-                <input type="text" class="form-control" placeholder="Search" data-bind="textInput: searchQuery, event: { input: filterResults }">
+                <input type="text" class="form-control" placeholder="Search" data-bind="textInput: searchQuery, event: { input: updateResults }">
                 <ul id="search-results" class="list-group" data-bind="foreach: searchResults">
-                    <li class="list-group-item hover" data-bind="click: $parent.resultSelected">
+                    <li class="list-group-item hover" data-bind="click: $parent.resultSelected.bind($data)">
                         <a data-bind="text: name"></a>
                         <p data-bind="text: description"></p>
                     </li>
                 </ul>
             </div>
         </div>
+        <div id="map-container" class="col-md-9" data-bind="map: mapCanvas"></div>
     </div>
 
 
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzwTsqBqhircQkdDzyP2YqMdsEjSha6I&"></script>
+    <script src="app/init.js"></script>
     <script src="app/main.js"></script>
 </body>
 

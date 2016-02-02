@@ -15,10 +15,25 @@ body {
 
 #map-container {
     height: inherit;
+    width: calc(100% - 20em);
 }
 
 #listview {
     padding: 0;
+    overflow: auto;
+    max-height: 100%;
+    max-width: 20em;
+}
+
+@media only screen and (max-width: 991px) {
+    #listview {
+        max-height: 40%;
+        max-width: 100%;
+    }
+    #map-container {
+        height: inherit;
+        width: 100%
+    }
 }
 
 #search-container {
