@@ -80,9 +80,9 @@ var MapViewModel = function () {
 
     self.animateMarker = function (marker) {
         if (self.lastMarker !== undefined) {
-            self.lastMarker.setIcon("../images/pin.svg")
+            self.lastMarker.setIcon("images/pin.svg")
         }
-        marker.setIcon("../images/pin-highlighted.svg");
+        marker.setIcon("images/pin-highlighted.svg");
         self.lastMarker = marker
     };
 
@@ -284,7 +284,7 @@ area.getMarkers = function (viewModelMap, filteredResults) {
         var marker = new google.maps.Marker({
             map: viewModelMap,
             position: place.coords,
-            icon: "../images/pin.svg"
+            icon: "images/pin.svg"
         });
 
         place.marker = marker;
