@@ -5,6 +5,10 @@ body {
     padding: 25px 0 0 0;
 }
 
+#error-message {
+    display: none;
+}
+
 .container-fluid {
     height: 100%;
     width: 100%;

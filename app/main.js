@@ -1,4 +1,5 @@
-/*global ko,google,$,document,console*/
+/*global google,ko,$,document,console,alert*/
+
 
 // ##### GoogleMap Binding Handler #####
 
@@ -80,10 +81,10 @@ var MapViewModel = function () {
 
     self.animateMarker = function (marker) {
         if (self.lastMarker !== undefined) {
-            self.lastMarker.setIcon("images/pin.svg")
+            self.lastMarker.setIcon("images/pin.svg");
         }
         marker.setIcon("images/pin-highlighted.svg");
-        self.lastMarker = marker
+        self.lastMarker = marker;
     };
 
 };
@@ -113,13 +114,30 @@ var ListViewModel = function () {
     self.resultSelected = function (place) {
         mapViewModel.showPlaceInfo(place);
     };
-
 };
 
 var mapViewModel;
 var listViewModel;
 
-$(document).ready(function () {
+function initGoogleMaps() {
+    $.ajax({
+        url: "https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzwTsqBqhircQkdDzyP2YqMdsEjSha6I&",
+        dataType: "jsonp",
+        success: function (response) {
+            start();
+        },
+        timeout: 10000,
+        error: function (request, status, error) {
+            alert("Failed to load google maps API");
+        }
+    });
+}
+
+initGoogleMaps();
+
+var start = function () {
+    //$(document).ready(function () {
+
     mapViewModel = new MapViewModel();
     listViewModel = new ListViewModel();
 
@@ -131,8 +149,7 @@ $(document).ready(function () {
     listViewModel.updateResults();
 
     mapViewModel.syncMarkersWithResults();
-});
-
+}; //);
 
 
 // ##### Model #####
@@ -262,9 +279,20 @@ Place.prototype.getWikiInfo = function () {
             } else {
                 self.noWiki = true;
             }
+        },
+        timeout: 10000,
+        error: function () {
+            self.wikiUrl = "";
+            self.wikiInfo = "";
+            if (wikiApiSuccessful !== false) {
+                alert("Could not connect to Wikipedia API");
+                wikiApiSuccessful = false;
+            }
         }
     });
 };
+
+var wikiApiSuccessful = null;
 
 var getAllWikiInfo = function (currentPlace) {
     area.places.forEach(function (place) {
