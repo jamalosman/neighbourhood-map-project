@@ -48,15 +48,44 @@ var MapViewModel = function () {
         self.markers.removeAll();
     };
 
+    self.currentInfoWindow = null;
+
     // open info window on a place
     self.showPlaceInfo = function (place) {
-        var infoWindow = new google.maps.InfoWindow({
+        // close the last window
+        if (self.currentInfoWindow !== null) {
+            self.currentInfoWindow.close();
+        }
+
+        // augment the place object with the info window
+        place.infoWindow = new google.maps.InfoWindow({
             content: place.getHtml(),
         });
 
-        console.log(infoWindow);
-        infoWindow.open(self.map, place.marker);
+        // remember this for next time
+        self.currentInfoWindow = place.infoWindow;
+        self.animateMarker(place.marker);
+        place.infoWindow.open(self.map, place.marker);
     };
+
+    self.updatePlaceInfo = function (place) {
+        // if the place has an info window with no wiki info on it, refresh it.
+        if (place.infoWindow &&
+            !place.infoWindow.content.includes("<h6>Wikipedia</h6>")) {
+            place.infoWindow.close();
+
+            self.showPlaceInfo(place);
+        }
+    };
+
+    self.animateMarker = function (marker) {
+        if (self.lastMarker !== undefined) {
+            self.lastMarker.setIcon("../images/pin.svg")
+        }
+        marker.setIcon("../images/pin-highlighted.svg");
+        self.lastMarker = marker
+    };
+
 };
 
 
@@ -109,7 +138,7 @@ $(document).ready(function () {
 // ##### Model #####
 var placeData = [
     {
-        name: "Royal Observatory",
+        name: "Royal Observatory, Greenwich",
         description: "TWren's 18th-century astronomical observatory on " +
             "the Prime Meridian, now a museum with a planetarium.",
         coords: {
@@ -184,7 +213,7 @@ Place.prototype.marker = null;
 
 // gets a html div representing the place for the google maps info window
 Place.prototype.getHtml = function () {
-    var template = '<div id="content">' +
+    var template = '<div class="content">' +
         '<h3 id="heading" >$name</h3>' +
         '<div id="bodyContent">' +
         '<p>$description</p>' +
@@ -195,9 +224,15 @@ Place.prototype.getHtml = function () {
         '<a href="$wikiUrl">$wikiUrl</a>';
 
     var wiki = "";
-    if (this.wikiInfo && this.wikiUrl) {
+
+    // if we have info from wikipedia, add it to the template
+    if (this.wikiUrl !== undefined && !this.noWiki) {
         wiki = wikiTemplate.replace("$wikiInfo", this.wikiInfo)
+            .replace("$wikiUrl", this.wikiUrl)
             .replace("$wikiUrl", this.wikiUrl);
+    } else if (this.wikiUrl === undefined && !this.noWiki) {
+        // if we don't, go get it;
+        getAllWikiInfo(this);
     }
 
     var html = template.replace("$name", this.name)
@@ -209,7 +244,8 @@ Place.prototype.getHtml = function () {
 
 // gets info from wikipedia
 Place.prototype.getWikiInfo = function () {
-    var requestUrl = "en.wikipeidia/w/api.php?" +
+    var self = this;
+    var requestUrl = "http://en.wikipedia.org/w/api.php?" +
         "action=opensearch&format=json&search=" +
         this.name +
         "&limit=10&namespace=0";
@@ -217,12 +253,24 @@ Place.prototype.getWikiInfo = function () {
         url: requestUrl,
         dataType: "jsonp",
         success: function (response) {
-            area.places.forEach(function (place) {
-                place.wikiUrl = response[3][0];
-                place.wikiInfo = response[2][0];
-            });
+            // if we found something on wikipedia
+            if (response[2][0] !== "") {
+                // add the wiki info to this place
+                self.wikiUrl = response[3][0];
+                self.wikiInfo = response[2][0];
+                mapViewModel.updatePlaceInfo(self);
+            } else {
+                self.noWiki = true;
+            }
         }
     });
+};
+
+var getAllWikiInfo = function (currentPlace) {
+    area.places.forEach(function (place) {
+        place.getWikiInfo();
+    });
+    mapViewModel.updatePlaceInfo(currentPlace);
 };
 
 placeData.forEach(function (place) {
@@ -236,8 +284,9 @@ area.getMarkers = function (viewModelMap, filteredResults) {
         var marker = new google.maps.Marker({
             map: viewModelMap,
             position: place.coords,
-            title: place.name
+            icon: "../images/pin.svg"
         });
+
         place.marker = marker;
 
         // callback for displaying place info
