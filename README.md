@@ -2,7 +2,13 @@
 
 This project simply displays a map around where I went to Uni, I've added a few places of interest.
 
-To run the project simply download the files and open index.html. The site was tested using python's SimpleHTTPServer and chrome browser.
+To run the project simply:
+* download the files
+* run the following command
+```sh bower install ```
+* open index.html. 
+
+The site was tested using python's SimpleHTTPServer and chrome browser, but should work without the server.
 
 Features
  - Interactive search (updates listview and map markers)
